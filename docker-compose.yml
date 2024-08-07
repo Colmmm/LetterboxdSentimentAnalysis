@@ -11,3 +11,4 @@ services:
       - .:/home/jovyan/app
     environment:
       - JUPYTER_ENABLE_LAB=yes
+    profiles: [jupyter]
