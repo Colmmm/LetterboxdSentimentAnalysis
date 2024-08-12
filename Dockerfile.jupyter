@@ -10,6 +10,9 @@ COPY . /home/jovyan/app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r /home/jovyan/app/requirements.txt
 
+# Copy the kaggle.json (for API credentials) to a directory the jovyan user can access
+COPY kaggle.json /home/jovyan/.kaggle/kaggle.json
+
 # Make port 8888 available to the world outside this container
 EXPOSE 8888
 
