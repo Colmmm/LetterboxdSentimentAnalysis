@@ -5,3 +5,4 @@ data/
 models/
 logs/
 kaggle.json
+notebooks/.ipynb_checkpoints/*

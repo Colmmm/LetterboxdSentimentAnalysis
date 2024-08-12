@@ -1,14 +1,61 @@
 version: '3.8'
 
 services:
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+    volumes:
+      - .:/app
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
+      - SCREEN_DEPTH=24
+    profiles:
+      - selenium
+
+  movie_url_scraper:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    depends_on:
+      - selenium
+    command: python /app/scripts/scrape_movie_urls.py --num_movies 100
+    profiles: [scrape, scrape_urls]
+  
+  review_scraper:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    depends_on:
+      - selenium
+      - movie_url_scraper
+    command: python /app/scripts/scrape_reviews.py --num_reviews 1000
+    profiles: [scrape, scrape_reviews]
+
+  uploader:
+    build: .
+    volumes:
+      - .:/app
+    #depends_on:
+      #- scraper
+    command: python scripts/upload_to_kaggle.py
+    profiles:
+      - upload
+
   jupyter:
     build:
       context: .
       dockerfile: Dockerfile.jupyter
     ports:
       - "8888:8888"
+    depends_on:
+      - selenium
     volumes:
       - .:/home/jovyan/app
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    profiles: [jupyter]
+    profiles:
+      - jupyter
