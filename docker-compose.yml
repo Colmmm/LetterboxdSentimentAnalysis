@@ -14,26 +14,25 @@ services:
     profiles:
       - selenium
 
-  movie_url_scraper:
+  scrape_from_movies:
     build:
       context: .
     volumes:
       - .:/app
     depends_on:
       - selenium
-    command: python /app/scripts/scrape_movie_urls.py --num_movies 100
-    profiles: [scrape, scrape_urls]
+    command: python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1
+    profiles: [scrape, scrape_from_movies]
   
-  review_scraper:
+  scrape_from_users:
     build:
       context: .
     volumes:
       - .:/app
     depends_on:
       - selenium
-      - movie_url_scraper
-    command: python /app/scripts/scrape_reviews.py --num_reviews 1000
-    profiles: [scrape, scrape_reviews]
+    command: python /app/scripts/scrape_from_users.py --num_users 10 --num_reviews_per_user 1
+    profiles: [scrape, scrape_from_users]
 
   uploader:
     build: .
