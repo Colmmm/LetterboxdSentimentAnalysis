@@ -7,12 +7,18 @@ services:
       - "4444:4444"
     volumes:
       - .:/app
+    profiles:
+      - selenium
     environment:
       - SCREEN_WIDTH=1920
       - SCREEN_HEIGHT=1080
       - SCREEN_DEPTH=24
-    profiles:
-      - selenium
+      - SE_OPTS="--session-request-timeout 120000 --session-retry-interval 5000"
+    healthcheck:
+      test: curl -s http://localhost:4444/wd/hub/status | grep '"ready":true'
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   scrape_from_movies:
     build:
@@ -20,7 +26,8 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - selenium
+      selenium:
+        condition: service_healthy 
     command: python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1
     profiles: [scrape, scrape_from_movies]
   
