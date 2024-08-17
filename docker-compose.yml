@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   selenium:
     image: selenium/standalone-chrome
@@ -13,12 +12,11 @@ services:
       - SCREEN_WIDTH=1920
       - SCREEN_HEIGHT=1080
       - SCREEN_DEPTH=24
-      - SE_OPTS="--session-request-timeout 120000 --session-retry-interval 5000"
     healthcheck:
-      test: curl -s http://localhost:4444/wd/hub/status | grep '"ready":true'
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      test: ["CMD-SHELL", "curl -s http://localhost:4444/wd/hub/status | grep '\"ready\":true'"]
+      interval: 20s
+      timeout: 20s
+      retries: 5
 
   scrape_from_movies:
     build:
