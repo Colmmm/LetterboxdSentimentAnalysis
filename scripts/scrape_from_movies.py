@@ -6,12 +6,15 @@ from selenium.webdriver.chrome.service import Service
 
 def scrape_movie_urls(num_movies):
     # Setup WebDriver
+    print("Starting to scrape movie urls!\n")
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    print("Connecting to selenium service....")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',
         options=options
     )
+    print("...Connected to selenium service!")
     movie_urls = []
     page = 1
     while len(movie_urls) < num_movies:
@@ -24,6 +27,11 @@ def scrape_movie_urls(num_movies):
         page += 1
     
     df = pd.DataFrame(movie_urls, columns=['url'])
+    print("Movie urls sucessfully scraped!\nMovie url preview:")
+    print(df.head().to_string())
+    print("\nClosing connection to selenium webdriver...")
+    driver.quit()
+    print("Connection closed sucessfully!\n\n")
     return df
 
 def normalize_rating(star_rating):
@@ -79,6 +87,11 @@ def scrape_reviews_from_movies(movie_urls, num_reviews_per_movie):
         all_reviews.extend(movie_reviews)
     
     df = pd.DataFrame(all_reviews)
+    print("Movie urls sucessfully scraped!\nReviews preview:")
+    print(df.head().to_string())
+    print("\nClosing connection to selenium webdriver...")
+    driver.quit()
+    print("Connection closed sucessfully!\n\n")
     return df
 
 if __name__ == "__main__":
