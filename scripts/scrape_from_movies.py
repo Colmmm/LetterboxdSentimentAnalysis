@@ -27,7 +27,7 @@ def scrape_movie_urls(num_movies):
         page += 1
     
     df = pd.DataFrame(movie_urls, columns=['url'])
-    print("Movie urls sucessfully scraped!\nMovie url preview:")
+    print("Movie urls sucessfully scraped!\nMovie urls preview:")
     print(df.head().to_string())
     print("\nClosing connection to selenium webdriver...")
     driver.quit()
@@ -87,7 +87,7 @@ def scrape_reviews_from_movies(movie_urls, num_reviews_per_movie):
         all_reviews.extend(movie_reviews)
     
     df = pd.DataFrame(all_reviews)
-    print("Movie urls sucessfully scraped!\nReviews preview:")
+    print("Reviews sucessfully scraped from movie urls!\nReviews preview:")
     print(df.head().to_string())
     print("\nClosing connection to selenium webdriver...")
     driver.quit()

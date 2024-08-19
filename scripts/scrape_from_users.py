@@ -7,10 +7,12 @@ def scrape_user_urls(num_users):
     # Setup WebDriver
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    print("Attempting to connect to Selenium WebDriver...")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',
         options=options
     )
+    print("...Connected to selenium service!")
     user_urls = []
     page = 1
     while len(user_urls) < num_users:
@@ -23,6 +25,11 @@ def scrape_user_urls(num_users):
         page += 1
     
     df = pd.DataFrame(user_urls, columns=['url'])
+    print("User urls sucessfully scraped!\nUser urls preview:")
+    print(df.head().to_string())
+    print("\nClosing connection to selenium webdriver...")
+    driver.quit()
+    print("Connection closed sucessfully!\n\n")
     return df
 
 def normalize_rating(star_rating):
@@ -76,6 +83,11 @@ def scrape_reviews_from_users(user_urls, num_reviews_per_user):
         all_reviews.extend(user_reviews)
     
     df = pd.DataFrame(all_reviews)
+    print("Reviews sucessfully scraped from user urls!\nReviews preview:")
+    print(df.head().to_string())
+    print("\nClosing connection to selenium webdriver...")
+    driver.quit()
+    print("Connection closed sucessfully!\n\n")
     return df
 
 if __name__ == "__main__":
