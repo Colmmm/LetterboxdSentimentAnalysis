@@ -3,6 +3,7 @@ import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 def scrape_movie_urls(num_movies):
     # Setup WebDriver
@@ -54,45 +55,91 @@ def scrape_reviews_from_movies(movie_urls, num_reviews_per_movie):
     for movie_url in movie_urls.url:
         print(f"Scraping reviews for movie: {movie_url}")
         movie_reviews = []
-        driver.get(f"{movie_url}/reviews/")
-        
         page = 1
-        while len(movie_reviews) < num_reviews_per_movie:
-            review_elements = driver.find_elements(By.CSS_SELECTOR, 'div.film-detail-content')
+        
+        try:
+            driver.get(f"{movie_url}/reviews/")
             
-            for element in review_elements:
-                if len(movie_reviews) >= num_reviews_per_movie:
+            # Scrape movie title and release year
+            try:
+                movie_title_element = driver.find_element(By.CSS_SELECTOR, 'div.contextual-title h1.headline-2 a')
+                movie_title = movie_title_element.text
+            except NoSuchElementException:
+                movie_title = None
+            
+            try:
+                movie_year_element = driver.find_element(By.CSS_SELECTOR, 'div.contextual-title h1.headline-2 small.metadata a')
+                movie_year = movie_year_element.text
+            except NoSuchElementException:
+                movie_year = None
+
+            while len(movie_reviews) < num_reviews_per_movie:
+                review_elements = driver.find_elements(By.CSS_SELECTOR, 'li.film-detail')
+                
+                for element in review_elements:
+                    if len(movie_reviews) >= num_reviews_per_movie:
+                        break
+                    
+                    review = {}
+                    review['movie_title'] = movie_title
+                    review['movie_year'] = movie_year
+
+                    try:
+                        # Scrape user URL
+                        user_url_element = element.find_element(By.CSS_SELECTOR, 'a.avatar.-a40')
+                        review['user_url'] = user_url_element.get_attribute('href')
+                    except NoSuchElementException:
+                        review['user_url'] = None
+
+                    try:
+                        # Scrape review text
+                        review_text_element = element.find_element(By.CSS_SELECTOR, 'div.body-text.-prose.collapsible-text')
+                        review['review_text'] = review_text_element.text
+                    except NoSuchElementException:
+                        review['review_text'] = None
+
+                    try:
+                        # Scrape rating
+                        rating_element = element.find_element(By.CSS_SELECTOR, 'span.rating')
+                        review['rating'] = normalize_rating(rating_element.text)
+                    except NoSuchElementException:
+                        review['rating'] = None
+
+                    try:
+                        # Scrape review date
+                        review_date_element = element.find_element(By.CSS_SELECTOR, 'span.date > span._nobr')
+                        review['review_date'] = review_date_element.text
+                    except NoSuchElementException:
+                        review['review_date'] = None
+                    
+                    review['movie_url'] = movie_url
+                    
+                    # Only add the review if it has text and a rating
+                    if review['review_text'] and review['rating'] is not None:
+                        movie_reviews.append(review)
+
+                # Go to next page if needed
+                if len(movie_reviews) < num_reviews_per_movie:
+                    page += 1
+                    driver.get(f"{movie_url}/reviews/page/{page}/")
+                else:
                     break
-                
-                review_text_element = element.find_element(By.CSS_SELECTOR, 'div.body-text.-prose.collapsible-text')
-                review_text = review_text_element.text if review_text_element else None
-                
-                rating_element = element.find_element(By.CSS_SELECTOR, 'span.rating')
-                star_rating = rating_element.text if rating_element else None
-                
-                if review_text and star_rating is not None:
-                    movie_reviews.append({
-                        'movie_url': movie_url,
-                        'review': review_text,
-                        'rating': normalize_rating(star_rating)
-                    })
             
-            # Go to next page if needed
-            if len(movie_reviews) < num_reviews_per_movie:
-                page += 1
-                driver.get(f"{movie_url}/reviews/page/{page}/")
-            else:
-                break
+        except TimeoutException:
+            print(f"Timeout while loading reviews for movie {movie_url}")
         
         all_reviews.extend(movie_reviews)
     
     df = pd.DataFrame(all_reviews)
-    print("Reviews sucessfully scraped from movie urls!\nReviews preview:")
+    print("Reviews successfully scraped from movie URLs!\nReviews preview:")
     print(df.head().to_string())
-    print("\nClosing connection to selenium webdriver...")
+    print("\nClosing connection to selenium WebDriver...")
     driver.quit()
-    print("Connection closed sucessfully!\n\n")
+    print("Connection closed successfully!\n\n")
     return df
+
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
