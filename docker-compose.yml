@@ -46,8 +46,6 @@ services:
     build: .
     volumes:
       - .:/app
-    #depends_on:
-      #- scraper
     command: python scripts/upload_to_kaggle.py
     profiles:
       - upload
