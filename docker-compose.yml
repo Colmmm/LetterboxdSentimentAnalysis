@@ -9,46 +9,44 @@ services:
     profiles:
       - selenium
 
-  scrape_from_movies:
+  scrape:
     build:
       context: .
     volumes:
       - .:/app
     depends_on:
       - selenium
+    profiles: [scrape_movies, scrape_users, scrape_both]
+
+  scrape_movies:
+    extends:
+      service: scrape
     command: bash -c "sleep 10 && python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1"
-    profiles: [scrape, scrape_from_movies]
-  
-  scrape_from_users:
-    build:
-      context: .
-    volumes:
-      - .:/app
-    depends_on:
-      - selenium
+    profiles: [scrape_movies]
+
+  scrape_users:
+    extends:
+      service: scrape
     command: bash -c "sleep 10 && python /app/scripts/scrape_from_users.py --num_users 2 --num_reviews_per_user 1"
-    profiles: [scrape, scrape_from_users]
-  
-  scrape_from_both:
-    build:
-      context: .
-    volumes:
-      - .:/app
-    depends_on:
-      - selenium
+    profiles: [scrape_users]
+
+  scrape_both:
+    extends:
+      service: scrape
     command: >
       bash -c "sleep 10 &&
                python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1 &&
-               python /app/scripts/scrape_from_users.py --num_movies 10 --num_reviews_per_user 1"
-    profiles: [scrape, scrape_from_both]
-
+               python /app/scripts/scrape_from_users.py --num_users 10 --num_reviews_per_user 1"
+    profiles: [scrape_both]
+  
   uploader:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.uploader
     volumes:
       - .:/app
-    command: python scripts/upload_to_kaggle.py
-    profiles:
-      - upload
+    command: bash -c "kaggle datasets version -p ./data/ -m 'Hi from docker-compose' "
+    profiles: [upload]
 
   jupyter:
     build:
