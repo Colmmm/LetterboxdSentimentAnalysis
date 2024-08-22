@@ -67,10 +67,10 @@ def scrape_reviews_from_users(user_urls, num_reviews_per_user):
                     try:
                         # Scrape movie details
                         movie_name_element = element.find_element(By.CSS_SELECTOR, 'h2.headline-2 a')
-                        review['movie_name'] = movie_name_element.text
+                        review['movie_title'] = movie_name_element.text
                         review['movie_url'] = f"{movie_name_element.get_attribute('href')}"
                     except NoSuchElementException:
-                        review['movie_name'] = None
+                        review['movie_title'] = None
                         review['movie_url'] = None
 
                     try:
@@ -96,9 +96,9 @@ def scrape_reviews_from_users(user_urls, num_reviews_per_user):
 
                     try:
                         movie_release_date_element = element.find_element(By.CSS_SELECTOR, 'small.metadata a')
-                        review['movie_release_date'] = movie_release_date_element.text
+                        review['movie_year'] = movie_release_date_element.text
                     except NoSuchElementException:
-                        review['movie_release_date'] = None
+                        review['movie_year'] = None
 
                     review['user_url'] = user_url
 
