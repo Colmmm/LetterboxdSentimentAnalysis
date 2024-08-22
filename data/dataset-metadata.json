@@ -1,0 +1,102 @@
+{
+  "title": "Letterboxd Reviews (2024)", 
+  "subtitle": "Letterboxd reviews and ratings, ideal for sentiment analysis.",
+  "description": "Letterboxd movie reviews and ratings scraped from both the popular movies page (https://letterboxd.com/films/popular/) as well as recent reviews from users found on popular members pages (https://letterboxd.com/members/popular/this/week/). This dataset is ideal for sentiment analysis and other machine learning tasks.",
+  "id": "colmwks/letterboxd-reviews-2024", 
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "resources": [
+    {
+      "path": "reviews_from_users.csv",
+      "description": "Contains reviews scraped from the popular members page.",
+      "schema": {
+        "fields": [
+          {
+            "name": "movie_name",
+            "description": "The name of the movie the review is about.",
+            "type": "string"
+          },
+          {
+            "name": "movie_url",
+            "description": "The URL of the movie.",
+            "type": "string"
+          },
+          {
+            "name": "review_text",
+            "description": "The content of the review.",
+            "type": "string"
+          },
+          {
+            "name": "rating",
+            "description": "The normalized rating given by the reviewer (scale of 0 to 1).",
+            "type": "number"
+          },
+          {
+            "name": "review_date",
+            "description": "Date of the review.",
+            "type": "string"
+          },
+          {
+            "name": "movie_year",
+            "description": "The release year of the movie.",
+            "type": "integer"
+          },
+          {
+            "name": "user_url",
+            "description": "The URL of the user who made the review.",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reviews_from_movies.csv",
+      "description": "Contains reviews scraped from the popular films page.",
+      "schema": {
+        "fields": [
+          {
+            "name": "movie_name",
+            "description": "The name of the movie the review is about.",
+            "type": "string"
+          },
+          {
+            "name": "movie_url",
+            "description": "The URL of the movie.",
+            "type": "string"
+          },
+          {
+            "name": "review_text",
+            "description": "The content of the review.",
+            "type": "string"
+          },
+          {
+            "name": "rating",
+            "description": "The normalized rating given by the reviewer (scale of 0 to 1).",
+            "type": "number"
+          },
+          {
+            "name": "review_date",
+            "description": "Date of the review.",
+            "type": "string"
+          },
+          {
+            "name": "movie_year",
+            "description": "The release year of the movie.",
+            "type": "integer"
+          },
+          {
+            "name": "user_url",
+            "description": "The URL of the user who made the review.",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "keywords": [
+   
+  ]
+}
