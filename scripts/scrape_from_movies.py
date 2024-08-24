@@ -10,6 +10,9 @@ def scrape_movie_urls(num_movies):
     print("Starting to scrape movie urls!\n")
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     print("Connecting to selenium service....")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',
@@ -42,7 +45,11 @@ def normalize_rating(star_rating):
 def scrape_reviews_from_movies(movie_urls, num_reviews_per_movie):
     # Setup WebDriver
     options = webdriver.ChromeOptions()
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     print("Attempting to connect to Selenium WebDriver...")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',

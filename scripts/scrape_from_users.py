@@ -9,6 +9,9 @@ def scrape_user_urls(num_users):
     # Setup WebDriver
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     print("Attempting to connect to Selenium WebDriver...")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',
@@ -42,6 +45,9 @@ def scrape_reviews_from_users(user_urls, num_reviews_per_user):
     # Setup WebDriver
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     print("Attempting to connect to Selenium WebDriver...")
     driver = webdriver.Remote(
         command_executor='http://selenium:4444/wd/hub',

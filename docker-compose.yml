@@ -2,29 +2,26 @@ version: '3.8'
 services:
   selenium:
     image: selenium/standalone-chrome
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
     ports:
       - "4444:4444"
     volumes:
       - .:/app
     profiles:
       - selenium
-    environment:
-      # Limits Chrome's memory usage
-      - SHM_SIZE=1g
-      - JAVA_OPTS=-Xmx512m
-
-    # Optional: Adding arguments to run Chrome with reduced resources
-    command: >
-      /opt/bin/entry_point.sh
-      --disable-dev-shm-usage
-      --no-sandbox
-      --disable-extensions
-      --disable-gpu
-      --remote-debugging-port=9222
 
   scrape:
     build:
       context: .
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
     volumes:
       - .:/app
     depends_on:
@@ -34,7 +31,7 @@ services:
   scrape_movies:
     extends:
       service: scrape
-    command: bash -c "sleep 10 && python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1"
+    command: bash -c "sleep 10 && python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 10"
     profiles: [scrape_movies]
 
   scrape_users:
@@ -48,8 +45,8 @@ services:
       service: scrape
     command: >
       bash -c "sleep 10 &&
-               python /app/scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1 &&
-               python /app/scripts/scrape_from_users.py --num_users 10 --num_reviews_per_user 1"
+               python /app/scripts/scrape_from_movies.py --num_movies 25 --num_reviews_per_movie 20 &&
+               python /app/scripts/scrape_from_users.py --num_users 25 --num_reviews_per_user 20"
     profiles: [scrape_both]
   
   uploader:
