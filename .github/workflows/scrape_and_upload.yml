@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Delay to ensure Selenium service is ready
+        run: sleep 10
+
       - name: Run scraping scripts
         run: |
           python scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1
