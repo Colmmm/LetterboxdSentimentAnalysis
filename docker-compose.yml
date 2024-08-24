@@ -8,6 +8,19 @@ services:
       - .:/app
     profiles:
       - selenium
+    environment:
+      # Limits Chrome's memory usage
+      - SHM_SIZE=1g
+      - JAVA_OPTS=-Xmx512m
+
+    # Optional: Adding arguments to run Chrome with reduced resources
+    command: >
+      /opt/bin/entry_point.sh
+      --disable-dev-shm-usage
+      --no-sandbox
+      --disable-extensions
+      --disable-gpu
+      --remote-debugging-port=9222
 
   scrape:
     build:
