@@ -14,14 +14,6 @@ jobs:
       - name: Start Selenium service
         run: docker compose --profile selenium up -d
 
-      - name: Wait for Selenium to be ready
-        run: |
-          echo "Waiting for Selenium to be ready..."
-          until curl -s http://localhost:4444/wd/hub/status | grep -q '"ready":true'; do
-            sleep 1
-          done
-          echo "Selenium is ready!"
-
       - name: Run both scraping tasks (if needed)
         run: docker compose --profile scrape_both up --build
 
