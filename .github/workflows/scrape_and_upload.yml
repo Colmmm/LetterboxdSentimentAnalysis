@@ -26,7 +26,10 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Delay to ensure Selenium service is ready
-        run: sleep 10
+        run: sleep 20
+
+      - name: Check Selenium service
+        run: curl http://selenium:4444/wd/hub/status
 
       - name: Run scraping scripts
         run: |
