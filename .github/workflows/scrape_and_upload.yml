@@ -14,11 +14,15 @@ jobs:
       - name: Start Selenium service
         run: docker compose --profile selenium up -d
 
+      - name: Create kaggle.json
+        run: |
+          mkdir -p ~/.kaggle
+          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
       - name: Run both scraping tasks (if needed)
         run: docker compose --profile selenium --profile scrape_both up --build
 
       - name: Run dataset upload to Kaggle
         run: docker compose --profile upload up --build
-        env:
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        
