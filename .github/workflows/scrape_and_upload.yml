@@ -7,43 +7,26 @@ jobs:
   scrape-and-upload:
     runs-on: ubuntu-latest
 
-    services:
-      selenium:
-        image: selenium/standalone-chrome
-        options: --shm-size=2g
-        ports:
-          - 4444:4444
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Start Selenium service
+        run: docker compose --profile selenium up -d
 
       - name: Wait for Selenium to be ready
         run: |
-          echo "Waiting for Selenium..."
+          echo "Waiting for Selenium to be ready..."
           until curl -s http://localhost:4444/wd/hub/status | grep -q '"ready":true'; do
             sleep 1
           done
-          echo "Selenium is ready!" 
+          echo "Selenium is ready!"
 
-      - name: Check Selenium service
-        run: curl http://selenium:4444/wd/hub/status
+      - name: Run both scraping tasks (if needed)
+        run: docker compose --profile scrape_both up --build
 
-      - name: Run scraping scripts
-        run: |
-          python scripts/scrape_from_movies.py --num_movies 10 --num_reviews_per_movie 1
-          python scripts/scrape_from_users.py --num_users 10 --num_reviews_per_user 1
-
-      - name: Upload dataset to Kaggle
-        run: kaggle datasets version -p ./data/ -m "Automated update"
+      - name: Run dataset upload to Kaggle
+        run: docker compose --profile upload up --build
         env:
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
