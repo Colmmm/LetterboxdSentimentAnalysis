@@ -10,6 +10,7 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome
+        options: --shm-size=2g
         ports:
           - 4444:4444
 
@@ -25,8 +26,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Delay to ensure Selenium service is ready
-        run: sleep 20
+      - name: Wait for Selenium to be ready
+        run: |
+          echo "Waiting for Selenium..."
+          until curl -s http://localhost:4444/wd/hub/status | grep -q '"ready":true'; do
+            sleep 1
+          done
+          echo "Selenium is ready!" 
 
       - name: Check Selenium service
         run: curl http://selenium:4444/wd/hub/status
