@@ -15,7 +15,7 @@ jobs:
         run: docker compose --profile selenium up -d
 
       - name: Run both scraping tasks (if needed)
-        run: docker compose --profile scrape_both up --build
+        run: docker compose --profile selenium --profile scrape_both up --build
 
       - name: Run dataset upload to Kaggle
         run: docker compose --profile upload up --build
