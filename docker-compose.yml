@@ -61,11 +61,9 @@ services:
   jupyter:
     build:
       context: .
-      dockerfile: Dockerfile.jupyter
+      dockerfile: Dockerfile.jupyter.pyspark
     ports:
       - "8888:8888"
-    depends_on:
-      - selenium
     volumes:
       - .:/home/jovyan/app
     environment:
