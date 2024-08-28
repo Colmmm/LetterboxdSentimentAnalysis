@@ -5,4 +5,4 @@ data/*.csv
 models/
 logs/
 kaggle.json
-notebooks/.ipynb_checkpoints/*
+notebooks/.ipynb_checkpoints/
